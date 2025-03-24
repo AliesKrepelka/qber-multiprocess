@@ -10,6 +10,9 @@ screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Qbrt")
 
+#spritesheet
+sprite_sheet_image = pygame.image.load(Base Block.png).convert_alpha()
+
 run = True
 while run:
     for event in pygame.event.get():
