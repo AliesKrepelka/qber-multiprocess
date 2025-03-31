@@ -1,0 +1,13 @@
+With parallelizing 
+
+> I'd preferably like to instantiate an object and communicate with it.
+
+There is no general advice and no cleanest way. The answer unfortunately really depends on what you do with that object.
+
+I mean, you can instantiate an object and invoke methods in single-threaded code already.
+
+If you want to do complicated calculation, and your calculation runs in numPy, use threading. If the calculation is in pure Python, use multiprocessing.
+
+If you want to blocking-wait for i/o in a method on that object, use threading *if* the i/o operations are from the Python standard library.
+
+If you want to spawn *lots* of threads that wait on i/o, use asyncio.
