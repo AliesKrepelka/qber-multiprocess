@@ -11,9 +11,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Qbrt")
 
 #spritesheet
-sprite = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/BaseBlock.png")
-sprite1 = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/BaseBlock1.png")
-sprite.set_colorkey((255, 255, 255))
+sprite1 = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/BaseBlock1.png")
 sprite1.set_colorkey((255, 255, 255))
 
 # Define the size and position of a single sprite
@@ -39,6 +37,11 @@ screen.blit(sprite1, (328, 358)) #5th row middleblock
 screen.blit(sprite1, (423, 358)) #5th row 2nd rightblock
 screen.blit(sprite1, (520, 358)) #5th row rightblock
 screen.blit(sprite1, (87, 439)) #6th row left block
+screen.blit(sprite1, (186, 439)) #6th row 2nd left block
+screen.blit(sprite1, (280, 439)) #6th row left middle block
+screen.blit(sprite1, (375, 439)) #6th row 2nd right middleblock block
+screen.blit(sprite1, (470, 439)) #6th row 2nd right block
+screen.blit(sprite1, (565, 439)) #6th row right block
 pygame.display.flip()
 
 run = True
