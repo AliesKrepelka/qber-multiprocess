@@ -1,60 +1,75 @@
 import pygame
 import sys
-import time
 import random
+import time
 pygame.init()
 
-# Screen setup
+# Screen
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Qbrt")
 
-# Load sprites safely
-try:
-    sprite = pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Base Block.png")
-    sprite1 = pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/BaseBlock1.png")
-    unsized = pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/pstandingr.png")
-except pygame.error as e:
-    print(f"Error loading image: {e}")
-    pygame.quit()
-    sys.exit()
+#spritesheet
+sprite1 = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/BaseBlock1.png")
+sprite2 = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/blueball.png")
 
-sprite.set_colorkey((255, 255, 255))
+unsized = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png")
+
+PstandingR = pygame.transform.scale(unsized, (48, 48))
+player_spawn = (360, 30)
 sprite1.set_colorkey((255, 255, 255))
 
-# Resize player sprite
-PstandingR = pygame.transform.scale(unsized, (48, 48))
+# Define the size and position of a single sprite
+sprite_width = 32
+sprite_height = 32
+sprite_x = 0
+sprite_y = 0
 
-# Block positions
-block_positions = [
-    (330, 40), (330, 199), (235, 200), (428, 200), (284, 120), (380, 120),
-    (186, 281), (280, 279), (378, 279), (475, 279), (136, 360), (232, 358),
-    (328, 358), (423, 358), (520, 358), (87, 439)   
-]
+screen.blit(sprite1, (330, 40)) #top block
+screen.blit(sprite1, (330, 199))
+screen.blit(sprite1, (235, 200)) #3rd row left block
+screen.blit(sprite1, (428, 200)) #3rd row right block
+screen.blit(sprite1, (284, 120)) #2nd section
+screen.blit(sprite1, (380, 120)) #2nd section right block
+#4th row start
+screen.blit(sprite1, (186, 281)) #4th row left block
+screen.blit(sprite1, (280, 279)) #4th row 2nd left block
+screen.blit(sprite1, (378, 279)) #4th row 2nd right block
+screen.blit(sprite1, (475, 279)) #4th row  right block
+screen.blit(sprite1, (136, 360)) #5th row left block
+screen.blit(sprite1, (232, 358)) #5th row 2nd left block
+screen.blit(sprite1, (328, 358)) #5th row middleblock
+screen.blit(sprite1, (423, 358)) #5th row 2nd rightblock
+screen.blit(sprite1, (520, 358)) #5th row rightblock
+screen.blit(sprite1, (87, 439)) #6th row left block
+screen.blit(sprite1, (186, 439)) #6th row 2nd left block
+screen.blit(sprite1, (280, 439)) #6th row left middle block
+screen.blit(sprite1, (375, 439)) #6th row 2nd right middleblock block
+screen.blit(sprite1, (470, 439)) #6th row 2nd right block
+screen.blit(sprite1, (565, 439)) #6th row right block
+screen.blit(PstandingR, player_spawn)
+pygame.display.flip()
 
-# Player spawn position
-player_spawn = (360, 30)  # Only one position, so no need for a list
+enemy = 0
+
+while pygame.quit==False:
+    if(enemy == 0): 
+        time.sleep(4)
+        screen.blit(sprite2, (565, 439)) #6th row right block
 
 run = True
 while run:
-    screen.fill((0, 0, 0))  # Clear screen each frame
-
-    # Draw blocks
-    for pos in block_positions:
-        screen.blit(sprite1, pos)
-
-    # Draw player sprite
-    screen.blit(PstandingR, player_spawn)
-
-    # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+     
             run = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 run = False
 
-    pygame.display.flip()  # Update display
+    # Update display lmfao
+    pygame.display.flip()
 
 pygame.quit()
+sys.exit()
