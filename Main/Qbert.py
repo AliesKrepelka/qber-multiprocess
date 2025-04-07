@@ -2,74 +2,114 @@ import pygame
 import sys
 import random
 import time
-pygame.init()
+import multiprocessing
 
-# Screen
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Qbrt")
+def spawn_enemy(queue):
+    time.sleep(4)
+    queue.put((565, 439))  # Spawn enemy at the bottom-right block
 
-#spritesheet
-sprite1 = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/BaseBlock1.png")
-sprite2 = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/blueball.png")
+def center_on_block(block_x, block_y, sprite_width, sprite_height):
+    # Calculate the center position of Q*Bert based on the block's position
+    block_center_x = block_x + sprite_width // 1.93  # Block center X
+    block_center_y = block_y + sprite_height // 2  # Block center Y
+    # Adjusting by a slight offset to ensure it's positioned correctly in relation to the block
+    offset_x = 5  # Shift slightly to the right
+    return [block_center_x - sprite_width // 2 + offset_x, block_center_y - sprite_height // 2]
 
-unsized = pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png")
+def get_neighbors(blocks, current_index):
+    # Given the index of the current block, get neighboring blocks (up, down, left, right)
+    neighbors = []
+    if current_index > 0:  # There's a block to the left
+        neighbors.append(current_index - 1)
+    if current_index + 1 < len(blocks):  # There's a block to the right
+        neighbors.append(current_index + 1)
+    return neighbors
 
-PstandingR = pygame.transform.scale(unsized, (48, 48))
-player_spawn = (360, 30)
-sprite1.set_colorkey((255, 255, 255))
+if __name__ == "__main__":
+    # Initialize Pygame and setup window only inside __main__ to avoid double windows.
+    pygame.init()
 
-# Define the size and position of a single sprite
-sprite_width = 32
-sprite_height = 32
-sprite_x = 0
-sprite_y = 0
+    # Screen setup
+    screen_width = 800
+    screen_height = 600
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Qbrt")
 
-screen.blit(sprite1, (330, 40)) #top block
-screen.blit(sprite1, (330, 199))
-screen.blit(sprite1, (235, 200)) #3rd row left block
-screen.blit(sprite1, (428, 200)) #3rd row right block
-screen.blit(sprite1, (284, 120)) #2nd section
-screen.blit(sprite1, (380, 120)) #2nd section right block
-#4th row start
-screen.blit(sprite1, (186, 281)) #4th row left block
-screen.blit(sprite1, (280, 279)) #4th row 2nd left block
-screen.blit(sprite1, (378, 279)) #4th row 2nd right block
-screen.blit(sprite1, (475, 279)) #4th row  right block
-screen.blit(sprite1, (136, 360)) #5th row left block
-screen.blit(sprite1, (232, 358)) #5th row 2nd left block
-screen.blit(sprite1, (328, 358)) #5th row middleblock
-screen.blit(sprite1, (423, 358)) #5th row 2nd rightblock
-screen.blit(sprite1, (520, 358)) #5th row rightblock
-screen.blit(sprite1, (87, 439)) #6th row left block
-screen.blit(sprite1, (186, 439)) #6th row 2nd left block
-screen.blit(sprite1, (280, 439)) #6th row left middle block
-screen.blit(sprite1, (375, 439)) #6th row 2nd right middleblock block
-screen.blit(sprite1, (470, 439)) #6th row 2nd right block
-screen.blit(sprite1, (565, 439)) #6th row right block
-screen.blit(PstandingR, player_spawn)
-pygame.display.flip()
+    # Load sprites
+    sprite1 = pygame.image.load(r"C:\Users\giann\Downloads\qbrt\Art\BaseBlock1.png")
+    sprite2 = pygame.image.load(r"C:\Users\giann\Downloads\qbrt\Art\blueball.png")
+    unsized = pygame.image.load(r"C:\Users\giann\Downloads\qbrt\Art\pstandingr.png")
+    PstandingR = pygame.transform.scale(unsized, (48, 48))  # Scale Q*Bert sprite
+    sprite1.set_colorkey((255, 255, 255))  # Transparent background for base blocks
 
-enemy = 0
+    # Block positions (pyramid layout)
+    block_positions = [
+        (330, 40),   # Top
+        (284, 120), (380, 120),
+        (235, 200), (330, 199), (428, 200),
+        (186, 281), (280, 279), (378, 279), (475, 279),
+        (136, 360), (232, 358), (328, 358), (423, 358), (520, 358),
+        (87, 439),  (186, 439), (280, 439), (375, 439), (470, 439), (565, 439)
+    ]
 
-while pygame.quit==False:
-    if(enemy == 0): 
-        time.sleep(4)
-        screen.blit(sprite2, (565, 439)) #6th row right block
+    # Set player position based on the first block
+    current_block_index = 0
+    player_pos = center_on_block(*block_positions[current_block_index], sprite1.get_width(), sprite1.get_height())
 
-run = True
-while run:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-     
-            run = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+    # Enemy process setup
+    enemy_queue = multiprocessing.Queue()
+    enemy_process = multiprocessing.Process(target=spawn_enemy, args=(enemy_queue,))
+    enemy_process.start()
+
+    enemy_spawned = False
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (
+                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 run = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:  # Move up-left
+                    if current_block_index - 1 >= 0:
+                        current_block_index -= 1
+                elif event.key == pygame.K_e:  # Move up-right
+                    if current_block_index + 1 < len(block_positions):
+                        current_block_index += 1
+                elif event.key == pygame.K_a:  # Move down-left
+                    # Add logic to handle moving down-left, for now just moving left
+                    if current_block_index - 1 >= 0:
+                        current_block_index -= 1
+                elif event.key == pygame.K_d:  # Move down-right
+                    # Add logic to handle moving down-right, for now just moving right
+                    if current_block_index + 1 < len(block_positions):
+                        current_block_index += 1
 
-    # Update display lmfao
-    pygame.display.flip()
+                # Update player position based on the new block
+                player_pos = center_on_block(*block_positions[current_block_index], sprite1.get_width(), sprite1.get_height())
 
-pygame.quit()
-sys.exit()
+        # Clear screen and redraw
+        screen.fill((0, 0, 0))
+
+        # Draw pyramid blocks
+        for pos in block_positions:
+            screen.blit(sprite1, pos)
+
+        # Draw player sprite at current position
+        screen.blit(PstandingR, player_pos)
+
+        # Debug: Check if sprite is being drawn (print position)
+        print(f"Player Position: {player_pos}")
+
+        # Spawn enemy after a delay
+        if not enemy_spawned and not enemy_queue.empty():
+            enemy_pos = enemy_queue.get()
+            screen.blit(sprite2, enemy_pos)
+            enemy_spawned = True
+
+        # Update the display
+        pygame.display.flip()
+
+    # Wait for enemy process to complete
+    enemy_process.join()
+    pygame.quit()
+    sys.exit()
