@@ -36,15 +36,15 @@ if __name__ == "__main__":
     pygame.display.set_caption("Qbrt")
 
     # Load sprites
-    sprite1 = pygame.image.load(r"C:\Users\giann\Downloads\qbrt\Art\BaseBlock1.png")
-    sprite2 = pygame.image.load(r"C:\Users\giann\Downloads\qbrt\Art\blueball.png")
-    unsized = pygame.image.load(r"C:\Users\giann\Downloads\qbrt\Art\pstandingr.png")
+    sprite1 = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/BaseBlock1.png")
+    sprite2 = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/blueball.png")
+    unsized = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png")
     PstandingR = pygame.transform.scale(unsized, (48, 48))  # Scale Q*Bert sprite
     sprite1.set_colorkey((255, 255, 255))  # Transparent background for base blocks
 
     # Block positions (pyramid layout)
     block_positions = [
-          (330, 40),   # Top
+        (330, 40),   # Top
         (284, 120), (380, 120),
         (235, 200), (330, 199), (428, 200),
         (186, 281), (280, 279), (378, 279), (475, 279),
@@ -52,6 +52,18 @@ if __name__ == "__main__":
         (87, 439),  (186, 439), (280, 439), (375, 439), (470, 439), (565, 439),
         (38, 519) , (135, 519), (230, 519), (325, 519), (420, 519), (515, 519), (610, 519)
     ]
+
+    # Load and scale saucer frames
+    saucer_frames = [
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow1.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow2.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow3.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow4.png").convert_alpha(),
+    ]
+
+    # Scale the saucer images to make them bigger
+    saucer_size = (40, 40)  # Set the new size for the saucer
+    saucer_frames = [pygame.transform.scale(frame, saucer_size) for frame in saucer_frames]
 
     # Set player position based on the first block
     current_block_index = 0
@@ -64,6 +76,9 @@ if __name__ == "__main__":
 
     enemy_spawned = False
     run = True
+    frame_index = 0
+    animation_speed = 0.1
+
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (
@@ -77,11 +92,9 @@ if __name__ == "__main__":
                     if current_block_index + 1 < len(block_positions):
                         current_block_index += 1
                 elif event.key == pygame.K_a:  # Move down-left
-                    # Add logic to handle moving down-left, for now just moving left
                     if current_block_index - 1 >= 0:
                         current_block_index -= 1
                 elif event.key == pygame.K_d:  # Move down-right
-                    # Add logic to handle moving down-right, for now just moving right
                     if current_block_index + 1 < len(block_positions):
                         current_block_index += 1
 
@@ -90,6 +103,15 @@ if __name__ == "__main__":
 
         # Clear screen and redraw
         screen.fill((0, 0, 0))
+
+        # Animation frame update
+        frame_index += animation_speed
+        if frame_index >= len(saucer_frames):
+            frame_index = 0
+        current_frame = saucer_frames[int(frame_index)]
+        saucer_x, saucer_y = 110, 320
+        screen.blit(current_frame, (110, 320))
+        screen.blit(current_frame, (610, 320))
 
         # Draw pyramid blocks
         for pos in block_positions:
