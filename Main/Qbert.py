@@ -10,8 +10,8 @@ def spawn_enemy(queue):
 
 def center_on_block(block_x, block_y, sprite_width, sprite_height):
     # Calculate the center position of Q*Bert based on the block's position
-    block_center_x = block_x + sprite_width // 1.93  # Block center X
-    block_center_y = block_y + sprite_height // 2  # Block center Y
+    block_center_x = block_x + sprite_width // 1.4  # Block center X
+    block_center_y = block_y + sprite_height // 2.7  # Block center Y
     # Adjusting by a slight offset to ensure it's positioned correctly in relation to the block
     offset_x = 5  # Shift slightly to the right
     return [block_center_x - sprite_width // 2 + offset_x, block_center_y - sprite_height // 2]
@@ -36,9 +36,12 @@ if __name__ == "__main__":
     pygame.display.set_caption("Qbrt")
 
     # Load sprites
-    sprite1 = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/BaseBlock1.png")
-    sprite2 = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/blueball.png")
-    unsized = pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png")
+    sprite1UN=  pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Level 1 top square unactivated.png")
+    sprite1 = pygame.transform.scale(sprite1UN, (105,105))
+    
+    #sprite1 = pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Level 1 top square unactivated.png")
+    sprite2 = pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/blueball.png")
+    unsized = pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/pstandingr.png")
     PstandingR = pygame.transform.scale(unsized, (48, 48))  # Scale Q*Bert sprite
     sprite1.set_colorkey((255, 255, 255))  # Transparent background for base blocks
 
@@ -55,10 +58,10 @@ if __name__ == "__main__":
 
     # Load and scale saucer frames
     saucer_frames = [
-        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow1.png").convert_alpha(),
-        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow2.png").convert_alpha(),
-        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow3.png").convert_alpha(),
-        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow4.png").convert_alpha(),
+        pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Rainbow disc 1.png").convert_alpha(),
+        pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Rainbow disc 2.png").convert_alpha(),
+        pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Rainbow disc 3.png").convert_alpha(),
+        pygame.image.load("C:/Users/GACarr7113/Downloads/python/Art/Rainbow disc 4.png").convert_alpha(),
     ]
 
     # Scale the saucer images to make them bigger
