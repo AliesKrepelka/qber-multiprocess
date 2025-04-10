@@ -47,13 +47,13 @@ if __name__ == "__main__":
 
     # Block positions (pyramid layout)
     block_positions = [
-        (330, 40),   # Top
-        (284, 120), (380, 120),
-        (235, 200), (330, 199), (428, 200),
-        (186, 281), (280, 279), (378, 279), (475, 279),
-        (136, 360), (232, 358), (328, 358), (423, 358), (520, 358),
-        (87, 439),  (186, 439), (280, 439), (375, 439), (470, 439), (565, 439),
-        (38, 519) , (135, 519), (230, 519), (325, 519), (420, 519), (515, 519), (610, 519)
+        a := (330, 40),   # Top
+        b := (284, 120), c := (380, 120),
+        d := (235, 200), e := (330, 199), f := (428, 200),
+        g := (186, 281), h := (280, 279), i := (378, 279), j := (475, 279),
+        k := (136, 360), l := (232, 358), m := (328, 358), n := (423, 358), o := (520, 358),
+        p := (87, 439),  q := (186, 439), r := (280, 439), s := (375, 439), t := (470, 439), u := (565, 439),
+        v := (38, 519) , w := (135, 519), x := (230, 519), y := (325, 519), z := (420, 519), A := (515, 519), B := (610, 519)
     ]
 
     # Load and scale saucer frames
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     ]
 
     # Scale the saucer images to make them bigger
-    saucer_size = (40, 40)  # Set the new size for the saucer
+    saucer_size = (50, 50)  # Set the new size for the saucer
     saucer_frames = [pygame.transform.scale(frame, saucer_size) for frame in saucer_frames]
 
     # Set player position based on the first block
