@@ -31,77 +31,74 @@ if __name__ == "__main__":
 
     # Load assets
     block_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Level 1 top square unactivated.png"), 
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square unactivated.png"),
         (105, 105)
     )
     player_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/pstandingr.png"), 
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png"),
         (48, 48)
     )
     saucer_frames = [
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Rainbow disc 1.png").convert_alpha(),
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Rainbow disc 2.png").convert_alpha(),
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Rainbow disc 3.png").convert_alpha(),
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Rainbow disc 4.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow1.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow2.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow3.png").convert_alpha(),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow4.png").convert_alpha(),
     ]
     saucer_size = (50, 50)
     saucer_frames = [pygame.transform.scale(frame, saucer_size) for frame in saucer_frames]
+
+    # Saucer animation variables (shared)
+    saucer_index = 0
+    saucer_animation_speed = 0.15
+    saucer_timer = 0
+
+    # Multiple saucer positions
+    saucer_positions = [
+        (570, 230),
+        (160, 230),
+        
+    ]
+
     # Pyramid block positions (x, y coordinates)
     block_positions = [
-        # Row 1 (top)
         a := (330, 40),
-        
-        # Row 2
+
         b := (284, 120), c := (380, 120),
-        
-        # Row 3
+
         d := (235, 200), e := (330, 200), f := (428, 200),
-        
-        # Row 4
+
         g := (186, 280), h := (280, 280), i := (378, 280), j := (475, 280),
-        
-        # Row 5
+
         k := (136, 360), l := (232, 360), m := (328, 360), n := (423, 360), o := (520, 360),
-        
-        # Row 6 (bottom)
+
         p := (87, 440), q := (186, 440), r := (280, 440), s := (375, 440), t := (470, 440), u := (565, 440)
     ]
 
     # Movement map: [up_left, up_right, down_left, down_right]
     movement_map = {
-        # Row 1
         a: [None, None, b, c],
-        
-        # Row 2
-        b: [a, None, d, e],
-        c: [None, a, e, f],
-        
-        # Row 3
-        d: [b, None, g, h],
+        b: [None, a, d, e],
+        c: [a, None, e, f],
+        d: [None, b, g, h],
         e: [b, c, h, i],
-        f: [None, c, i, j],
-        
-        # Row 4
-        g: [d, None, k, l],
+        f: [c, None, i, j],
+        g: [None, d, k, l],
         h: [d, e, l, m],
         i: [e, f, m, n],
-        j: [None, f, n, o],
-        
-        # Row 5
-        k: [g, None, p, q],
+        j: [f, None, n, o],
+        k: [None, g, p, q],
         l: [g, h, q, r],
         m: [h, i, r, s],
         n: [i, j, s, t],
-        o: [None, j, t, u],
-        
-        # Row 6 (can't move down)
-        p: [k, None, None, None],
+        o: [j, None, t, u],
+        p: [None, k, None, None],
         q: [k, l, None, None],
         r: [l, m, None, None],
         s: [m, n, None, None],
         t: [n, o, None, None],
-        u: [None, o, None, None]
+        u: [o, None, None, None]
     }
+
 
     # Game state
     current_block = a
@@ -109,15 +106,18 @@ if __name__ == "__main__":
     is_falling = False
     fall_speed = 8
 
+    clock = pygame.time.Clock()
+
     # --- Main Loop ---
     running = True
     while running:
+        dt = clock.tick(60) / 1000.0  # Time delta for consistent animation
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                
+
             if event.type == pygame.KEYDOWN and not is_falling:
-                # Movement keys: Q/W (up), A/S (down)
                 direction = None
                 if event.key in (pygame.K_q, pygame.K_7):
                     direction = "up_left"
@@ -132,8 +132,8 @@ if __name__ == "__main__":
                     next_block = get_valid_move(current_block, direction, movement_map)
                     if next_block:
                         current_block = next_block
-                        player_pos = center_on_block(*current_block, 
-                                                     block_sprite.get_width(), 
+                        player_pos = center_on_block(*current_block,
+                                                     block_sprite.get_width(),
                                                      block_sprite.get_height())
                     else:
                         is_falling = True
@@ -141,23 +141,31 @@ if __name__ == "__main__":
         # Falling mechanics
         if is_falling:
             player_pos[1] += fall_speed
-            if player_pos[1] > 800:  # Reset when off-screen
+            if player_pos[1] > 800:
                 current_block = a
-                player_pos = center_on_block(*current_block, 
-                                           block_sprite.get_width(), 
-                                           block_sprite.get_height())
+                player_pos = center_on_block(*current_block,
+                                             block_sprite.get_width(),
+                                             block_sprite.get_height())
                 is_falling = False
+
+        # Saucer animation
+        saucer_timer += dt
+        if saucer_timer >= saucer_animation_speed:
+            saucer_timer = 0
+            saucer_index = (saucer_index + 1) % len(saucer_frames)
 
         # --- Drawing ---
         screen.fill((0, 0, 0))
-        
-        # Draw pyramid
+
         for pos in block_positions:
             screen.blit(block_sprite, pos)
-            
-        # Draw player
+
         screen.blit(player_sprite, player_pos)
-        
+
+        # Draw all animated saucers
+        for pos in saucer_positions:
+            screen.blit(saucer_frames[saucer_index], pos)
+
         pygame.display.flip()
 
     pygame.quit()
