@@ -34,6 +34,10 @@ if __name__ == "__main__":
         pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square unactivated.png"),
         (105, 105)
     )
+    block_activated_sprite = pygame.transform.scale(
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square activated.png"),
+        (105, 105)
+    )
     player_sprite = pygame.transform.scale(
         pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png"),
         (48, 48)
@@ -56,55 +60,50 @@ if __name__ == "__main__":
     saucer_positions = [
         (570, 230),
         (160, 230),
-        
     ]
 
     # Pyramid block positions (x, y coordinates)
     block_positions = [
         a := (330, 40),
-
         b := (284, 120), c := (380, 120),
-
         d := (235, 200), e := (330, 200), f := (428, 200),
-
         g := (186, 280), h := (280, 280), i := (378, 280), j := (475, 280),
-
         k := (136, 360), l := (232, 360), m := (328, 360), n := (423, 360), o := (520, 360),
-
         p := (87, 440), q := (186, 440), r := (280, 440), s := (375, 440), t := (470, 440), u := (565, 440)
     ]
 
     # Movement map: [up_left, up_right, down_left, down_right]
     movement_map = {
         a: [None, None, b, c],
-        b: [None, a, d, e],
-        c: [a, None, e, f],
-        d: [None, b, g, h],
+        b: [a, None, d, e],
+        c: [None, a, e, f],
+        d: [b, None, g, h],
         e: [b, c, h, i],
-        f: [c, None, i, j],
-        g: [None, d, k, l],
+        f: [None, c, i, j],
+        g: [d, None, k, l],
         h: [d, e, l, m],
         i: [e, f, m, n],
-        j: [f, None, n, o],
-        k: [None, g, p, q],
+        j: [None, f, n, o],
+        k: [g, None, p, q],
         l: [g, h, q, r],
         m: [h, i, r, s],
         n: [i, j, s, t],
-        o: [j, None, t, u],
-        p: [None, k, None, None],
+        o: [None, j, t, u],
+        p: [k, None, None, None],
         q: [k, l, None, None],
         r: [l, m, None, None],
         s: [m, n, None, None],
         t: [n, o, None, None],
-        u: [o, None, None, None]
+        u: [None, o, None, None]
     }
-
 
     # Game state
     current_block = a
     player_pos = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())
     is_falling = False
     fall_speed = 8
+    deaths = 0  # Track the number of deaths
+    activated_blocks = set()  # Set to keep track of activated blocks
 
     clock = pygame.time.Clock()
 
@@ -135,6 +134,7 @@ if __name__ == "__main__":
                         player_pos = center_on_block(*current_block,
                                                      block_sprite.get_width(),
                                                      block_sprite.get_height())
+                        activated_blocks.add(current_block)  # Activate the block
                     else:
                         is_falling = True
 
@@ -147,6 +147,14 @@ if __name__ == "__main__":
                                              block_sprite.get_width(),
                                              block_sprite.get_height())
                 is_falling = False
+                deaths += 1  # Increment death count
+
+                # Reset the game after 2 deaths
+                if deaths >= 2:
+                    current_block = a
+                    player_pos = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())
+                    is_falling = False
+                    deaths = 0  # Reset death count for restart
 
         # Saucer animation
         saucer_timer += dt
@@ -158,7 +166,11 @@ if __name__ == "__main__":
         screen.fill((0, 0, 0))
 
         for pos in block_positions:
-            screen.blit(block_sprite, pos)
+            # If the block is activated, use the activated sprite
+            if pos in activated_blocks:
+                screen.blit(block_activated_sprite, pos)
+            else:
+                screen.blit(block_sprite, pos)
 
         screen.blit(player_sprite, player_pos)
 
