@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 import time
-import multiprocessing
 
 # --- Helper Functions ---
 def center_on_block(block_x, block_y, sprite_width, sprite_height):
@@ -119,6 +118,10 @@ if __name__ == "__main__":
     fall_speed = 8
     deaths = 0
     activated_blocks = set()
+    jump_time = .2
+    jump_speed = 100
+    jump_height = 10
+    jump_start = None
 
     clock = pygame.time.Clock()
 
@@ -144,22 +147,29 @@ if __name__ == "__main__":
                 if direction:
                     next_block = get_valid_move(current_block, direction, movement_map)
                     if next_block:
+                        jump_start = time.time()  # Record the jump start time
                         current_block = next_block
-                        player_pos = center_on_block(*current_block,
-                                                     block_sprite.get_width(),
-                                                     block_sprite.get_height())
+                        player_pos = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())
                         activated_blocks.add(current_block)
                         player_sprite = qbert_sprites[direction]
                     else:
                         is_falling = True
 
+        if jump_start:
+            jump_elapsed = time.time() - jump_start
+            if jump_elapsed < jump_time:
+                # Simulate jump by altering the player's vertical position
+                jump_progress = (jump_elapsed / jump_time)
+                player_pos[1] -= jump_height * (1 - jump_progress)
+            else:
+                jump_start = None  # Reset jump after it finishes
+                player_pos[1] = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())[1]
+
         if is_falling:
             player_pos[1] += fall_speed
             if player_pos[1] > 800:
                 current_block = a
-                player_pos = center_on_block(*current_block,
-                                             block_sprite.get_width(),
-                                             block_sprite.get_height())
+                player_pos = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())
                 is_falling = False
                 deaths += 1
                 player_sprite = qbert_sprites["down_right"]
