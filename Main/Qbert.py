@@ -6,13 +6,11 @@ import multiprocessing
 
 # --- Helper Functions ---
 def center_on_block(block_x, block_y, sprite_width, sprite_height):
-    """Center the player sprite on a pyramid block."""
     block_center_x = block_x + (sprite_width // 1.9)
     block_center_y = block_y + (sprite_height // 6)
-    return [block_center_x - 24, block_center_y - 24]  # Adjusted for 48x48 sprite
+    return [block_center_x - 24, block_center_y - 24]
 
 def get_valid_move(current_block, direction, movement_map):
-    """Get next block in specified direction if valid."""
     destinations = movement_map.get(current_block, [])
     direction_map = {
         "up_left": 0,
@@ -38,10 +36,24 @@ if __name__ == "__main__":
         pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square activated.png"),
         (105, 105)
     )
-    player_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/pstandingr.png"),
-        (48, 48)
-    )
+
+    qbert_sprites = {
+        "up_left": pygame.transform.scale(
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert back left jump.png"), (48, 48)
+        ),
+        "up_right": pygame.transform.scale(
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert back right jump.png"), (48, 48)
+        ),
+        "down_left": pygame.transform.scale(
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert front left jump.png"), (48, 48)
+        ),
+        "down_right": pygame.transform.scale(
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert front right jump.png"), (48, 48)
+        ),
+    }
+
+    player_sprite = qbert_sprites["down_right"]
+
     saucer_frames = [
         pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow1.png").convert_alpha(),
         pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow2.png").convert_alpha(),
@@ -51,28 +63,25 @@ if __name__ == "__main__":
     saucer_size = (50, 50)
     saucer_frames = [pygame.transform.scale(frame, saucer_size) for frame in saucer_frames]
 
-    # Saucer animation variables (shared)
     saucer_index = 0
     saucer_animation_speed = 0.15
     saucer_timer = 0
 
-    # Multiple saucer positions
     saucer_positions = [
         (570, 230),
         (160, 230),
     ]
 
-    # Pyramid block positions (x, y coordinates)
     block_positions = [
         a := (330, 40),
         b := (284, 120), c := (380, 120),
         d := (235, 200), e := (330, 200), f := (428, 200),
         g := (186, 280), h := (280, 280), i := (378, 280), j := (475, 280),
         k := (136, 360), l := (232, 360), m := (328, 360), n := (423, 360), o := (520, 360),
-        p := (87, 440), q := (186, 440), r := (280, 440), s := (375, 440), t := (470, 440), u := (565, 440)
+        p := (87, 440), q := (186, 440), r := (280, 440), s := (375, 440), t := (470, 440), u := (565, 440),
+        v := (40, 520), w := (136, 520), x := (232, 520), y := (328, 520), z := (423, 520), aa := (520, 520), ab := (615, 520)
     ]
 
-    # Movement map: [up_left, up_right, down_left, down_right]
     movement_map = {
         a: [None, None, b, c],
         b: [a, None, d, e],
@@ -89,28 +98,33 @@ if __name__ == "__main__":
         m: [h, i, r, s],
         n: [i, j, s, t],
         o: [None, j, t, u],
-        p: [k, None, None, None],
-        q: [k, l, None, None],
-        r: [l, m, None, None],
-        s: [m, n, None, None],
-        t: [n, o, None, None],
-        u: [None, o, None, None]
+        p: [k, None, v, w],
+        q: [k, l, w, x],
+        r: [l, m, x, y],
+        s: [m, n, y, z],
+        t: [n, o, z, aa],
+        u: [None, o, aa, ab],
+        v: [p, None, None, None],
+        w: [p, q, None, None],
+        x: [q, r, None, None],
+        y: [r, s, None, None],
+        z: [s, t, None, None],
+        aa: [t, u, None, None],
+        ab: [u, None, None, None]
     }
 
-    # Game state
     current_block = a
     player_pos = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())
     is_falling = False
     fall_speed = 8
-    deaths = 0  # Track the number of deaths
-    activated_blocks = set()  # Set to keep track of activated blocks
+    deaths = 0
+    activated_blocks = set()
 
     clock = pygame.time.Clock()
 
-    # --- Main Loop ---
     running = True
     while running:
-        dt = clock.tick(60) / 1000.0  # Time delta for consistent animation
+        dt = clock.tick(60) / 1000.0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -134,11 +148,11 @@ if __name__ == "__main__":
                         player_pos = center_on_block(*current_block,
                                                      block_sprite.get_width(),
                                                      block_sprite.get_height())
-                        activated_blocks.add(current_block)  # Activate the block
+                        activated_blocks.add(current_block)
+                        player_sprite = qbert_sprites[direction]
                     else:
                         is_falling = True
 
-        # Falling mechanics
         if is_falling:
             player_pos[1] += fall_speed
             if player_pos[1] > 800:
@@ -147,26 +161,24 @@ if __name__ == "__main__":
                                              block_sprite.get_width(),
                                              block_sprite.get_height())
                 is_falling = False
-                deaths += 1  # Increment death count
+                deaths += 1
+                player_sprite = qbert_sprites["down_right"]
 
-                # Reset the game after 2 deaths
                 if deaths >= 2:
                     current_block = a
                     player_pos = center_on_block(*current_block, block_sprite.get_width(), block_sprite.get_height())
                     is_falling = False
-                    deaths = 0  # Reset death count for restart
+                    deaths = 0
+                    player_sprite = qbert_sprites["down_right"]
 
-        # Saucer animation
         saucer_timer += dt
         if saucer_timer >= saucer_animation_speed:
             saucer_timer = 0
             saucer_index = (saucer_index + 1) % len(saucer_frames)
 
-        # --- Drawing ---
         screen.fill((0, 0, 0))
 
         for pos in block_positions:
-            # If the block is activated, use the activated sprite
             if pos in activated_blocks:
                 screen.blit(block_activated_sprite, pos)
             else:
@@ -174,7 +186,6 @@ if __name__ == "__main__":
 
         screen.blit(player_sprite, player_pos)
 
-        # Draw all animated saucers
         for pos in saucer_positions:
             screen.blit(saucer_frames[saucer_index], pos)
 
