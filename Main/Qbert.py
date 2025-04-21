@@ -74,6 +74,17 @@ if __name__ == "__main__":
     change_block_img = pygame.transform.scale(
         pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/level 1 change to icon.png"), (25, 25)
     )
+    red_ball_jump = pygame.transform.scale(
+    pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/red jump.png"), (28, 28))
+    red_ball_squish = pygame.transform.scale(
+    pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/red squish.png"), (28, 28))
+
+    # --- Red Ball Animation Setup ---
+    red_ball_frames = [red_ball_jump, red_ball_squish]  # Store jump and squish frames in a list
+    red_ball_frame_index = 0
+    red_ball_animation_timer = 0
+    red_ball_animation_speed = 0.3  # lower = faster animation
+
 
     # Saucer animation
     saucer_frames = [
@@ -138,6 +149,12 @@ if __name__ == "__main__":
     }
 
     # Game variables
+    red_ball_block = block_positions[1]  # Start just below Q*bert
+    red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
+    red_ball_sprite = red_ball_jump
+    red_ball_timer = 0
+    red_ball_jump_delay = 0.8  # seconds between bounces
+
     current_block = block_positions[0]
     player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
     print(f"Current block: {current_block}")
@@ -194,6 +211,10 @@ if __name__ == "__main__":
                 jump_start = None
                 player_pos[1] = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())[1]
 
+        red_ball_animation_timer += dt
+        if red_ball_animation_timer >= red_ball_animation_speed:
+            red_ball_animation_timer = 0
+            red_ball_frame_index = (red_ball_frame_index + 1) % len(red_ball_frames)  # Cycle through frames
 
         if is_falling:
             player_pos[1] += fall_speed
@@ -207,8 +228,21 @@ if __name__ == "__main__":
                     deaths = 0
                     activated_blocks.clear()
                     score = 0
+        red_ball_timer += dt
+        if red_ball_timer >= red_ball_jump_delay:
+            red_ball_timer = 0
+            next_down = get_valid_move(red_ball_block, "down_left", movement_map)
+            if not next_down:
+                next_down = get_valid_move(red_ball_block, "down_right", movement_map)
 
-        saucer_timer += dt
+            if next_down:
+                red_ball_block = next_down
+                red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
+            else:
+                red_ball_block = block_positions[1]  # Reset to top if off map
+                red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
+
+                saucer_timer += dt
         if saucer_timer >= saucer_animation_speed:
             saucer_timer = 0
             saucer_index = (saucer_index + 1) % len(saucer_frames)
@@ -232,6 +266,8 @@ if __name__ == "__main__":
         screen.blit(player_num_img, (10 + player_text_img.get_width() + 10, 10))
         screen.blit(change_to_img, (10, 120))
         screen.blit(change_block_img, (85, 150))
+        screen.blit(red_ball_frames[red_ball_frame_index], red_ball_pos)
+
 
         draw_score(score)
         pygame.display.flip()
