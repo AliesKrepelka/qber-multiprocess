@@ -4,7 +4,6 @@ import random
 import time
 
 # --- Helper Functions ---
-
 def center_on_block(block_x, block_y, sprite_width, sprite_height):
     block_center_x = block_x + (sprite_width // 1.9)
     block_center_y = block_y + (sprite_height // 6)
@@ -27,68 +26,68 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((800, 800))
     pygame.display.set_caption("Q*bert")
 
-    # Load assets using Alies Krepelka paths
+    # Load assets
     block_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Level 1 top square unactivated.png"),
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square unactivated.png"),
         (105, 105)
     )
     block_activated_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Level 1 top square activated.png"),
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square activated.png"),
         (105, 105)
     )
 
     qbert_sprites = {
         "up_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert back left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert back left jump.png"), (48, 48)
         ),
         "up_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert back right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert back right jump.png"), (48, 48)
         ),
         "down_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert front left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert front left jump.png"), (48, 48)
         ),
         "down_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert front right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert front right jump.png"), (48, 48)
         ),
     }
 
     player_sprite = qbert_sprites["down_right"]
 
-    # Load score digit images
     digit_images = {
         str(i): pygame.transform.scale(
-            pygame.image.load(f"C:/Users/giann/Downloads/qbrt/Art/score {i}.png"), (40, 40)
+            pygame.image.load(f"C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/score {i}.png"), (40, 40)
         )
         for i in range(10)
     }
 
     player_text_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/player text no number.png"), (150, 20)
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/player text no number.png"), (150, 20)
     )
     player_num_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/player 1 number.png"), (20, 20)
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/player 1 number.png"), (20, 20)
     )
 
     change_to_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/change to text.png"), (150, 20)
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/change to text.png"), (150, 20)
     )
     change_block_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/level 1 change to icon.png"), (25, 25)
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/level 1 change to icon.png"), (25, 25)
     )
-    red_ball_jump = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/red jump.png"), (28, 28))
-    red_ball_squish = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/red squish.png"), (28, 28))
 
-    # --- Red Ball Animation Setup ---
-    red_ball_frames = [red_ball_jump, red_ball_squish]  # Store jump and squish frames in a list
+    red_ball_jump = pygame.transform.scale(
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/red jump.png"), (28, 28)
+    )
+    red_ball_squish = pygame.transform.scale(
+        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/red squish.png"), (28, 28)
+    )
+
+    red_ball_frames = [red_ball_jump, red_ball_squish]
     red_ball_frame_index = 0
     red_ball_animation_timer = 0
-    red_ball_animation_speed = 0.3  # lower = faster animation
+    red_ball_animation_speed = 0.3
 
-    # Saucer animation
     saucer_frames = [
-        pygame.image.load(f"C:/Users/giann/Downloads/qbrt/Art/Rainbow{i}.png").convert_alpha()
+        pygame.image.load(f"C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Rainbow{i}.png").convert_alpha()
         for i in range(1, 5)
     ]
     saucer_size = (50, 50)
@@ -100,7 +99,6 @@ if __name__ == "__main__":
     left_saucer = [(570, 230)]
     right_saucer = [(160, 230)]
 
-    # Draw score
     def draw_score(score, x=15, y=40, spacing=10):
         score_str = str(score)
         for i, digit in enumerate(score_str):
@@ -108,7 +106,7 @@ if __name__ == "__main__":
             screen.blit(img, (x + i * (img.get_width() + spacing), y))
 
     # Block layout
-    block_positions = [  # naming like a, b, c for movement map reference
+    block_positions = [
         a := (330, 40),
         b := (284, 120), c := (380, 120),
         d := (235, 200), e := (330, 200), f := (428, 200),
@@ -149,73 +147,28 @@ if __name__ == "__main__":
         ab: [u, None, None, None]
     }
 
-    # Game variables
-    red_ball_block = block_positions[1]  # Start just below Q*bert
+    red_ball_block = block_positions[1]
     red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
-    red_ball_sprite = red_ball_jump
     red_ball_timer = 0
-    red_ball_jump_delay = 0.8  # seconds between bounces
+    red_ball_jump_delay = 0.8
 
     current_block = block_positions[0]
     player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
-    print(f"Current block: {current_block}")
     is_falling = False
     deaths = 0
     score = 0
     activated_blocks = set()
-    fall_speed = 8  
-    jump_time = .2
+    fall_speed = 8
+    jump_time = 0.2
     jump_height = 10
     jump_start = None
 
     clock = pygame.time.Clock()
-
-    def draw_button(screen, text, rect, color, hover_color, font, mouse_pos, mouse_click):
-        if rect.collidepoint(mouse_pos):
-            pygame.draw.rect(screen, hover_color, rect)
-            if mouse_click[0]:
-                return True
-        else:
-            pygame.draw.rect(screen, color, rect)
-        surf = font.render(text, True, (255, 255, 255))
-        screen.blit(surf, surf.get_rect(center=rect.center))
-        return False
-
-    def title_screen(screen):
-        font = pygame.font.SysFont(None, 60)
-        title_font = pygame.font.SysFont(None, 100)
-        play_btn = pygame.Rect(300, 250, 200, 80)
-        quit_btn = pygame.Rect(300, 360, 200, 80)
-
-        while True:
-            screen.fill((30, 30, 30))
-            mpos = pygame.mouse.get_pos()
-            mclick = pygame.mouse.get_pressed()
-
-            # draw title text
-            title_surf = title_font.render("Q*bert", True, (255, 204, 0))
-            screen.blit(title_surf, (250, 100))
-
-            # buttons
-            if draw_button(screen, "PLAY", play_btn, (0, 128, 0), (0, 200, 0), font, mpos, mclick):
-                return True    # signal to start game
-            if draw_button(screen, "QUIT", quit_btn, (128, 0, 0), (200, 0, 0), font, mpos, mclick):
-                pygame.quit()
-                sys.exit()
-
-            for e in pygame.event.get():
-                if e.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-            pygame.display.flip()
-            clock.tick(60)
-
-    # Show title screen and start game
-    title_screen(screen)
     running = True
 
-    # Main game loop
+    # Add a new variable to track the last vertical direction of the red ball
+    last_vertical_direction = None
+
     while running:
         dt = clock.tick(60) / 1000.0
 
@@ -236,7 +189,9 @@ if __name__ == "__main__":
 
                 if direction:
                     next_block = get_valid_move(current_block, direction, movement_map)
-                    if next_block:
+                    if isinstance(next_block, list):
+                        is_falling = True
+                    elif next_block:
                         jump_start = time.time()
                         current_block = next_block
                         player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
@@ -247,8 +202,7 @@ if __name__ == "__main__":
                     else:
                         is_falling = True
 
-        # Jump animation
-        if jump_start is not None:
+        if jump_start:
             jump_elapsed = time.time() - jump_start
             if jump_elapsed < jump_time:
                 jump_progress = jump_elapsed / jump_time
@@ -261,6 +215,33 @@ if __name__ == "__main__":
         if red_ball_animation_timer >= red_ball_animation_speed:
             red_ball_animation_timer = 0
             red_ball_frame_index = (red_ball_frame_index + 1) % len(red_ball_frames)
+
+        red_ball_timer += dt
+        if red_ball_timer >= red_ball_jump_delay:
+            red_ball_timer = 0
+            # Random movement for the red ball, ensuring it only moves downward
+            possible_moves = [move for move in movement_map.get(red_ball_block, []) if move is not None]
+
+            # Filter out upward movement
+            if possible_moves:
+                # Only choose a valid move that moves downward
+                valid_moves = [move for move in possible_moves if move[1] > red_ball_block[1]]
+
+                # If there are valid downward moves, pick one
+                if valid_moves:
+                    red_ball_block = random.choice(valid_moves)
+
+            red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
+
+            # When red ball reaches the bottom, reset its position to the top
+            if red_ball_pos[1] > 800:  # If the ball falls off the bottom of the screen
+                red_ball_block = block_positions[0]  # Respawn at the top
+                red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
+
+        saucer_timer += dt
+        if saucer_timer >= saucer_animation_speed:
+            saucer_timer = 0
+            saucer_index = (saucer_index + 1) % len(saucer_frames)
 
         if is_falling:
             player_pos[1] += fall_speed
@@ -275,32 +256,14 @@ if __name__ == "__main__":
                     activated_blocks.clear()
                     score = 0
 
-        red_ball_timer += dt
-        if red_ball_timer >= red_ball_jump_delay:
-            red_ball_timer = 0
-            next_down = get_valid_move(red_ball_block, "down_left", movement_map)
-            if not next_down:
-                next_down = get_valid_move(red_ball_block, "down_right", movement_map)
+        # --- Collision Detection: Red Ball hits Player ---
+        if red_ball_block == current_block and not is_falling:
+            is_falling = True
 
-            if next_down:
-                red_ball_block = next_down
-                red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
-            else:
-                red_ball_block = block_positions[1]
-                red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
-
-        saucer_timer += dt
-        if saucer_timer >= saucer_animation_speed:
-            saucer_timer = 0
-            saucer_index = (saucer_index + 1) % len(saucer_frames)
-
-        # Drawing
         screen.fill((0, 0, 0))
         for pos in block_positions:
-            if pos in activated_blocks:
-                screen.blit(block_activated_sprite, pos)
-            else:
-                screen.blit(block_sprite, pos)
+            sprite = block_activated_sprite if pos in activated_blocks else block_sprite
+            screen.blit(sprite, pos)
 
         screen.blit(player_sprite, player_pos)
 
