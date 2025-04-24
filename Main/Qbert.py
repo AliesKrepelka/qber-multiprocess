@@ -28,26 +28,26 @@ if __name__ == "__main__":
 
     # Load assets
     block_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square unactivated.png"),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square unactivated.png"),
         (105, 105)
     )
     block_activated_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square activated.png"),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square activated.png"),
         (105, 105)
     )
 
     qbert_sprites = {
         "up_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert back left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert back left jump.png"), (48, 48)
         ),
         "up_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert back right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert back right jump.png"), (48, 48)
         ),
         "down_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert front left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert front left jump.png"), (48, 48)
         ),
         "down_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Qbert front right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert front right jump.png"), (48, 48)
         ),
     }
 
@@ -55,30 +55,30 @@ if __name__ == "__main__":
 
     digit_images = {
         str(i): pygame.transform.scale(
-            pygame.image.load(f"C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/score {i}.png"), (40, 40)
+            pygame.image.load(f"C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/score {i}.png"), (40, 40)
         )
         for i in range(10)
     }
 
     player_text_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/player text no number.png"), (150, 20)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/player text no number.png"), (150, 20)
     )
     player_num_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/player 1 number.png"), (20, 20)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/player 1 number.png"), (20, 20)
     )
 
     change_to_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/change to text.png"), (150, 20)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/change to text.png"), (150, 20)
     )
     change_block_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/level 1 change to icon.png"), (25, 25)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/level 1 change to icon.png"), (25, 25)
     )
 
     red_ball_jump = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/red jump.png"), (28, 28)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/red jump.png"), (28, 28)
     )
     red_ball_squish = pygame.transform.scale(
-        pygame.image.load("C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/red squish.png"), (28, 28)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/red squish.png"), (28, 28)
     )
 
     red_ball_frames = [red_ball_jump, red_ball_squish]
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     red_ball_animation_speed = 0.3
 
     saucer_frames = [
-        pygame.image.load(f"C:/Users/ABKrep8015/Downloads/qber-multiprocess-main/Main/Art/Rainbow{i}.png").convert_alpha()
+        pygame.image.load(f"C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow{i}.png").convert_alpha()
         for i in range(1, 5)
     ]
     saucer_size = (50, 50)
@@ -168,6 +168,60 @@ if __name__ == "__main__":
 
     # Add a new variable to track the last vertical direction of the red ball
     last_vertical_direction = None
+
+
+
+    def draw_button(screen, text, rect, color, hover_color, font, mouse_pos, mouse_click):
+        if rect.collidepoint(mouse_pos):
+            pygame.draw.rect(screen, hover_color, rect)
+            if mouse_click[0]:
+                return True
+        else:
+            pygame.draw.rect(screen, color, rect)
+        surf = font.render(text, True, (255, 255, 255))
+        screen.blit(surf, surf.get_rect(center=rect.center))
+        return False
+
+
+
+    def title_screen(screen):
+        font = pygame.font.SysFont(None, 60)
+        title_font = pygame.font.SysFont(None, 100)
+        play_btn = pygame.Rect(300, 250, 200, 80)
+        quit_btn = pygame.Rect(300, 360, 200, 80)
+
+        while True:
+            screen.fill((30, 30, 30))
+            mpos = pygame.mouse.get_pos()
+            mclick = pygame.mouse.get_pressed()
+
+            # draw title text
+            title_surf = title_font.render("Q*bert", True, (255, 204, 0))
+            screen.blit(title_surf, (250, 100))
+
+            # buttons
+            if draw_button(screen, "PLAY", play_btn, (0, 128, 0), (0, 200, 0), font, mpos, mclick):
+                return True    # signal to start game
+            if draw_button(screen, "QUIT", quit_btn, (128, 0, 0), (200, 0, 0), font, mpos, mclick):
+                pygame.quit()
+                sys.exit()
+
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            pygame.display.flip()
+            clock.tick(60)
+
+    # Show title screen and start game
+    title_screen(screen)
+    running = True
+
+
+
+
+
 
     while running:
         dt = clock.tick(60) / 1000.0
