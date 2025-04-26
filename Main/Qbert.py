@@ -54,57 +54,60 @@ if __name__ == "__main__":
 
     # --- Asset Loading ---
     block_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Level 1 top square unactivated.png"),
+        pygame.image.load("C:/Users/Logan/Downloads/python code/Level 1 top square unactivated.png"),
         (105, 105)
     )
     block_activated_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Level 1 top square activated.png"),
+        pygame.image.load("C:/Users/Logan/Downloads/python code/Level 1 top square activated.png"),
         (105, 105)
     )
 
     qbert_sprites = {
         "up_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert back left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert back left jump.png"), (48, 48)
         ),
         "up_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert back right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert back right jump.png"), (48, 48)
         ),
         "down_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert front left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert front left jump.png"), (48, 48)
         ),
         "down_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/Qbert front right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert front right jump.png"), (48, 48)
         ),
     }
 
+    Life_sprite = {"life": pygame.transform.scale(
+            pygame.image.load("C:/Users/Logan/Downloads/python code/Life counter.png"), (15, 15)
+    )}
     player_sprite = qbert_sprites["down_right"]
 
     digit_images = {
         str(i): pygame.transform.scale(
-            pygame.image.load(f"C:/Users/giann/Downloads/qbrt/Art/score {i}.png"), (40, 40)
+            pygame.image.load(f"C:/Users/Logan/Downloads/python code/score {i}.png"), (40, 40)
         )
         for i in range(10)
     }
 
     player_text_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/player text no number.png"), (150, 20)
+        pygame.image.load("C:/Users/Logan/Downloads/python code/player text no number.png"), (150, 20)
     )
     player_num_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/player 1 number.png"), (20, 20)
+        pygame.image.load("C:/Users/Logan/Downloads/python code/player 1 number.png"), (20, 20)
     )
 
     change_to_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/change to text.png"), (150, 20)
+        pygame.image.load("C:/Users/Logan/Downloads/python code/change to text.png"), (150, 20)
     )
     change_block_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/level 1 change to icon.png"), (25, 25)
+        pygame.image.load("C:/Users/Logan/Downloads/python code/level 1 change to icon.png"), (25, 25)
     )
 
     red_ball_jump = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/red jump.png"), (28, 28)
+        pygame.image.load("C:/Users/Logan/Downloads/python code/red jump.png"), (28, 28)
     )
     red_ball_squish = pygame.transform.scale(
-        pygame.image.load("C:/Users/giann/Downloads/qbrt/Art/red squish.png"), (28, 28)
+        pygame.image.load("C:/Users/Logan/Downloads/python code/red squish.png"), (28, 28)
     )
 
     red_ball_frames = [red_ball_jump, red_ball_squish]
@@ -113,7 +116,7 @@ if __name__ == "__main__":
     red_ball_animation_speed = 0.3
 
     saucer_frames = [
-        pygame.image.load(f"C:/Users/giann/Downloads/qbrt/Art/Rainbow{i}.png").convert_alpha()
+        pygame.image.load(f"C:/Users/Logan/Downloads/python code/Rainbow disc {i}.png").convert_alpha()
         for i in range(1, 5)
     ]
     saucer_size = (50, 50)
@@ -180,14 +183,13 @@ if __name__ == "__main__":
     current_block = block_positions[0]
     player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
     is_falling = False
-    deaths = 0
+    lives = 3
     score = 0
     activated_blocks = set()
     fall_speed = 8
     jump_time = 0.2
     jump_height = 10
     jump_start = None
-
     clock = pygame.time.Clock()
 
     # --- Saucer Process Setup ---
@@ -242,6 +244,27 @@ if __name__ == "__main__":
     title_screen(screen)
     running = True
 
+    # --- Game Over ---
+    def game_over_screen(screen):
+        font = pygame.font.SysFont(None, 100)
+        start_time = time.time()
+
+        while True:
+            screen.fill((30, 30, 30))
+            title_surf = font.render("GAME OVER", True, (255, 0, 0))
+            screen.blit(title_surf, (200, 350))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            pygame.display.flip()
+            clock.tick(60)
+
+            if time.time() - start_time >= 2:  # game over shows for 2 seconds
+                return  
+            
     # --- Main Game Loop ---
     while running:
         dt = clock.tick(60) / 1000.0
@@ -324,15 +347,22 @@ if __name__ == "__main__":
         if is_falling:
             player_pos[1] += fall_speed
             if player_pos[1] > 800:
-                deaths += 1
+                lives -= 1
                 is_falling = False
                 current_block = block_positions[0]
                 player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
                 player_sprite = qbert_sprites["down_right"]
-                if deaths >= 2:
-                    deaths = 0
+                if lives <= 0:
+                    game_over_screen(screen)
+                    title_screen(screen)
+
+                    lives = 3
                     activated_blocks.clear()
                     score = 0
+                    current_block = block_positions[0]
+                    player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
+                    player_sprite = qbert_sprites["down_right"]
+
 
         # Collision detection
         if red_ball_block == current_block and not is_falling:
@@ -355,8 +385,17 @@ if __name__ == "__main__":
         screen.blit(change_to_img, (10, 120))
         screen.blit(change_block_img, (85, 150))
         screen.blit(red_ball_frames[red_ball_frame_index], red_ball_pos)
-
+    
         draw_score(score)
+
+        def draw_lives(screen, lives, sprite):
+            for i in range(lives):
+                x = 20  # 20 pixels from the left
+                y = 250 + i * (sprite.get_height() + 10)  # space between lives
+                screen.blit(sprite, (x, y))
+
+        draw_lives(screen, lives, Life_sprite["life"])
+
         pygame.display.flip()
 
     # --- Cleanup ---
