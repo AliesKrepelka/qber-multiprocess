@@ -33,7 +33,9 @@ def red_ball_logic(movement_map, start_block, queue, jump_delay):
         time.sleep(0.01)  # Short sleep to reduce CPU load
 
 
+pygame.mixer.init()
 
+jump_sound = pygame.mixer.Sound("C:\\Users\\Alies Krepelka\\Downloads\\qber-multiprocess-main\\jump.mp3")
 
 
 # --- Helper Functions ---
@@ -339,12 +341,16 @@ if __name__ == "__main__":
                 direction = None
                 if event.key in (pygame.K_q, pygame.K_7):
                     direction = "up_left"
+                    jump_sound.play() 
                 elif event.key in (pygame.K_w, pygame.K_9):
                     direction = "up_right"
+                    jump_sound.play() 
                 elif event.key in (pygame.K_a, pygame.K_1):
                     direction = "down_left"
+                    jump_sound.play() 
                 elif event.key in (pygame.K_s, pygame.K_3):
                     direction = "down_right"
+                    jump_sound.play() 
 
                 if direction:
                     next_block = get_valid_move(current_block, direction, movement_map)
