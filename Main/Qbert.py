@@ -4,6 +4,38 @@ import random
 import time
 import multiprocessing 
 
+
+# Define the red ball logic function
+def red_ball_logic(movement_map, start_block, queue, jump_delay):
+    red_ball_block = start_block
+    last_jump_time = time.time()
+
+    while True:
+        current_time = time.time()
+
+        # Time to move the ball?
+        if current_time - last_jump_time >= jump_delay:
+            last_jump_time = current_time
+            possible_moves = [move for move in movement_map.get(red_ball_block, []) if move is not None]
+            valid_moves = [move for move in possible_moves if move[1] > red_ball_block[1]]
+
+            if valid_moves:
+                red_ball_block = random.choice(valid_moves)
+
+            # Check if it hit the bottom
+            if red_ball_block[1] >= 510:
+                red_ball_block = start_block
+
+
+            # Send updated block back to main process
+            queue.put(red_ball_block)
+
+        time.sleep(0.01)  # Short sleep to reduce CPU load
+
+
+
+
+
 # --- Helper Functions ---
 def center_on_block(block_x, block_y, sprite_width, sprite_height):
     block_center_x = block_x + (sprite_width // 1.9)
@@ -54,60 +86,60 @@ if __name__ == "__main__":
 
     # --- Asset Loading ---
     block_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/Level 1 top square unactivated.png"),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square unactivated.png"),
         (105, 105)
     )
     block_activated_sprite = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/Level 1 top square activated.png"),
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Level 1 top square activated.png"),
         (105, 105)
     )
 
     qbert_sprites = {
         "up_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert back left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert back left jump.png"), (48, 48)
         ),
         "up_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert back right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert back right jump.png"), (48, 48)
         ),
         "down_left": pygame.transform.scale(
-            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert front left jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert front left jump.png"), (48, 48)
         ),
         "down_right": pygame.transform.scale(
-            pygame.image.load("C:/Users/Logan/Downloads/python code/Qbert front right jump.png"), (48, 48)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Qbert front right jump.png"), (48, 48)
         ),
     }
 
     Life_sprite = {"life": pygame.transform.scale(
-            pygame.image.load("C:/Users/Logan/Downloads/python code/Life counter.png"), (15, 15)
+            pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Life counter.png"), (15, 15)
     )}
     player_sprite = qbert_sprites["down_right"]
 
     digit_images = {
         str(i): pygame.transform.scale(
-            pygame.image.load(f"C:/Users/Logan/Downloads/python code/score {i}.png"), (40, 40)
+            pygame.image.load(f"C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/score {i}.png"), (40, 40)
         )
         for i in range(10)
     }
 
     player_text_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/player text no number.png"), (150, 20)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/player text no number.png"), (150, 20)
     )
     player_num_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/player 1 number.png"), (20, 20)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/player 1 number.png"), (20, 20)
     )
 
     change_to_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/change to text.png"), (150, 20)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/change to text.png"), (150, 20)
     )
     change_block_img = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/level 1 change to icon.png"), (25, 25)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/level 1 change to icon.png"), (25, 25)
     )
 
     red_ball_jump = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/red jump.png"), (28, 28)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/red jump.png"), (28, 28)
     )
     red_ball_squish = pygame.transform.scale(
-        pygame.image.load("C:/Users/Logan/Downloads/python code/red squish.png"), (28, 28)
+        pygame.image.load("C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/red squish.png"), (28, 28)
     )
 
     red_ball_frames = [red_ball_jump, red_ball_squish]
@@ -116,7 +148,7 @@ if __name__ == "__main__":
     red_ball_animation_speed = 0.3
 
     saucer_frames = [
-        pygame.image.load(f"C:/Users/Logan/Downloads/python code/Rainbow disc {i}.png").convert_alpha()
+        pygame.image.load(f"C:/Users/Alies Krepelka/Downloads/qber-multiprocess-main/Main/Art/Rainbow disc {i}.png").convert_alpha()
         for i in range(1, 5)
     ]
     saucer_size = (50, 50)
@@ -180,6 +212,21 @@ if __name__ == "__main__":
     red_ball_timer = 0
     red_ball_jump_delay = 0.8
 
+
+    red_ball_queue = multiprocessing.Queue()
+
+# Start the red ball logic in a separate process
+    red_ball_process = multiprocessing.Process(
+    target=red_ball_logic,
+    args=(movement_map, block_positions[1], red_ball_queue, red_ball_jump_delay)
+)
+
+    red_ball_process.start()
+
+
+
+
+   
     current_block = block_positions[0]
     player_pos = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())
     is_falling = False
@@ -191,7 +238,7 @@ if __name__ == "__main__":
     jump_height = 10
     jump_start = None
     clock = pygame.time.Clock()
-
+    dt = clock.tick(60) / 1000 
     # --- Saucer Process Setup ---
     saucer_queue = multiprocessing.Queue()
     saucer_process = multiprocessing.Process(
@@ -200,6 +247,20 @@ if __name__ == "__main__":
     )
     saucer_process.start()
     saucer_positions = [(570, 230), (160, 230)]  # Initial positions
+
+
+#WIN SCREEN
+    def draw_win_screen():
+        screen.fill((0, 0, 0))  # Black background
+        font = pygame.font.SysFont(None, 80)
+        text = font.render("YOU WIN!", True, (255, 215, 0))  # Gold text
+        rect = text.get_rect(center=(WIDTH//2, HEIGHT//2))
+        screen.blit(text, rect)
+
+    def check_win_condition():
+        return all(blocks)
+
+
 
     # --- Title Screen ---
     def draw_button(screen, text, rect, color, hover_color, font, mouse_pos, mouse_click):
@@ -300,7 +361,7 @@ if __name__ == "__main__":
                     else:
                         is_falling = True
 
-        # --- Update Logic ---
+
         # Player jump animation
         if jump_start:
             jump_elapsed = time.time() - jump_start
@@ -311,27 +372,26 @@ if __name__ == "__main__":
                 jump_start = None
                 player_pos[1] = center_on_block(current_block[0], current_block[1], block_sprite.get_width(), block_sprite.get_height())[1]
 
-        # Red ball animation
+        while not red_ball_queue.empty():
+            red_ball_block = red_ball_queue.get()
+            red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
+
+
+   # --- Red Ball Animation ---
         red_ball_animation_timer += dt
         if red_ball_animation_timer >= red_ball_animation_speed:
             red_ball_animation_timer = 0
             red_ball_frame_index = (red_ball_frame_index + 1) % len(red_ball_frames)
 
-        # Red ball movement
-        red_ball_timer += dt
-        if red_ball_timer >= red_ball_jump_delay:
-            red_ball_timer = 0
-            possible_moves = [move for move in movement_map.get(red_ball_block, []) if move is not None]
-            valid_moves = [move for move in possible_moves if move[1] > red_ball_block[1]]
-            if valid_moves:
-                red_ball_block = random.choice(valid_moves)
-            red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
-            if red_ball_pos[1] > 800:
-                red_ball_block = block_positions[0]
+   # --- Red Ball Movement (get from the multiprocessing queue) ---
+        try:
+            while not red_ball_queue.empty():
+                red_ball_block = red_ball_queue.get_nowait()
                 red_ball_pos = center_on_block(red_ball_block[0], red_ball_block[1], block_sprite.get_width(), block_sprite.get_height())
 
         # Saucer animation
-        saucer_timer += dt
+        except:
+            saucer_timer += dt
         if saucer_timer >= saucer_animation_speed:
             saucer_timer = 0
             saucer_index = (saucer_index + 1) % len(saucer_frames)
@@ -399,6 +459,8 @@ if __name__ == "__main__":
         pygame.display.flip()
 
     # --- Cleanup ---
+    red_ball_process.terminate()
+    red_ball_process.join()
     saucer_process.terminate()
     saucer_process.join()
     pygame.quit()
