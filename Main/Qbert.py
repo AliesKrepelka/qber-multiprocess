@@ -37,7 +37,6 @@ pygame.mixer.init()
 
 jump_sound = pygame.mixer.Sound("C:\\Users\\Alies Krepelka\\Downloads\\qber-multiprocess-main\\jump.mp3")
 
-
 # --- Helper Functions ---
 def center_on_block(block_x, block_y, sprite_width, sprite_height):
     block_center_x = block_x + (sprite_width // 1.9)
@@ -77,6 +76,17 @@ def saucer_worker(queue):
         queue.put([(left_x, 230), (right_x, 230)])
         time.sleep(0.05)
 
+
+def sound_worker(queue):
+    """Handles sound playback in a separate process"""
+    while True:
+        # Wait for a sound play command from the main process
+        sound_command = queue.get()
+        
+        if sound_command == 'jump':
+            jump_sound.play()
+
+
 # --- Game Setup ---
 if __name__ == "__main__":
     # Required for Windows multiprocessing
@@ -85,6 +95,11 @@ if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((800, 800))
     pygame.display.set_caption("Q*bert")
+
+    sound_queue = multiprocessing.Queue()
+   
+    sound_process = multiprocessing.Process(target=sound_worker, args=(sound_queue,))
+    sound_process.start()
 
     # --- Asset Loading ---
     block_sprite = pygame.transform.scale(
@@ -341,16 +356,16 @@ if __name__ == "__main__":
                 direction = None
                 if event.key in (pygame.K_q, pygame.K_7):
                     direction = "up_left"
-                    jump_sound.play() 
+                    sound_queue.put('jump')
                 elif event.key in (pygame.K_w, pygame.K_9):
                     direction = "up_right"
-                    jump_sound.play() 
+                    sound_queue.put('jump')
                 elif event.key in (pygame.K_a, pygame.K_1):
                     direction = "down_left"
-                    jump_sound.play() 
+                    sound_queue.put('jump') 
                 elif event.key in (pygame.K_s, pygame.K_3):
                     direction = "down_right"
-                    jump_sound.play() 
+                    sound_queue.put('jump') 
 
                 if direction:
                     next_block = get_valid_move(current_block, direction, movement_map)
@@ -465,6 +480,8 @@ if __name__ == "__main__":
         pygame.display.flip()
 
     # --- Cleanup ---
+    sound_process.terminate()
+    sound_process.terminate()
     red_ball_process.terminate()
     red_ball_process.join()
     saucer_process.terminate()
