@@ -303,7 +303,7 @@ if __name__ == "__main__":
             mclick = pygame.mouse.get_pressed()
 
             title_surf = title_font.render("Q*bert", True, (255, 204, 0))
-            screen.blit(title_surf, (250, 100))
+            screen.blit(title_surf, (290, 100))
 
             if draw_button(screen, "PLAY", play_btn, (0, 128, 0), (0, 200, 0), font, mpos, mclick):
                 return True
